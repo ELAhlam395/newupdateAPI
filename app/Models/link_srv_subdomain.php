@@ -12,6 +12,7 @@ class link_srv_subdomain extends Model
     protected $fillable = [
         'id_subdomain',
         'Id_Server',
+        'Add_ip'
        
     ];
     public function post()

@@ -104,7 +104,7 @@ class AjaxController extends BaseController
 
 
 
-        return redirect('http://104.194.228.126/welcome');
+        return redirect('welcome');
         
     }
 

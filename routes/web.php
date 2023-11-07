@@ -51,9 +51,11 @@ Route::get('/welcome/view', ['\App\Http\Controllers\Controller','view'])->name('
 
 
 Route::get('/welcome/getEmployeeDetails/{empid}', [Controller::class, 'getEmployeeDetails'])->name('getEmployeeDetails');
-
+Route::get('/welcome/edited/{empid}', [Controller::class, 'edited'])->name('edited');
 
 Route::get('/welcome/getEmployees/{id}', [Controller::class, 'getEmployees']);
+
+Route::get('/welcome/getEmployees55/{id}', [Controller::class, 'getEmployees55']);
 
 Route::get('/welcome/getEmployees2/{id}', [Controller::class, 'getEmployees2']);
 

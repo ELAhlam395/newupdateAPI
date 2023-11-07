@@ -74,6 +74,24 @@ class Controller extends BaseController
 
     }
 
+    public function getEmployees55($departmentid=0,$id5=0){
+
+        // SELECT acc__prov__servers.User from acc__prov__servers INNER JOIN link2s ON acc__prov__servers.id = link2s.Id_Acc_Server
+        // INNER JOIN provider__servers ON link2s.Id_Prov_Server = provider__servers.id AND provider__servers.id = 1;
+
+        $empData['data'] = DB::table('acc__prv__srvs')
+        ->join('link2s', 'acc__prv__srvs.id', '=', 'link2s.Id_Acc_Server')
+        ->join('provider__servers', 'link2s.Id_Prov_Server', '=', 'provider__servers.id')
+        ->where('provider__servers.id', '=', $departmentid)
+       
+        ->select('acc__prv__srvs.id', 'acc__prv__srvs.User','acc__prv__srvs.Password','acc__prv__srvs.Location')
+        ->orderBy('acc__prv__srvs.User', 'asc')
+        ->get();
+
+        return response()->json($empData);
+
+    }
+
     public function store_servers(Request $request)
     {
 
@@ -104,13 +122,11 @@ class Controller extends BaseController
         $payment_mth = $request->Payment_Method;
         $comment = $request->Comment;
         $additional_ips = $request->additional_ips;
-        $account = $request->sel_emp;
+        $account = $request->sel_emp22;
         $Domain = $request->domains;
         $Team = $request->Teams;
         $PROVIDER_ = $request->provider_input;
-
-
-
+       
 
         //Insertion
 
@@ -136,6 +152,8 @@ class Controller extends BaseController
         //   ---     Add link Server with sub domain    ----   //
         $additional_ips = $request->additional_ips;
 
+        $stringadditional_ips = explode(",", $additional_ips);
+
         $domains = $request->fruits2;
         $stringArray = explode(",", $domains);
 
@@ -150,6 +168,7 @@ class Controller extends BaseController
 
                     'id_subdomain'=>$stringArray[$counter],
                     'Id_Server'=>$id,
+                    'Add_ip'=> $stringadditional_ips[$counter]
 
                 ]);
 
@@ -284,8 +303,39 @@ class Controller extends BaseController
       ->pluck('Name','id')
       ->toArray();
 
+      /*
+      $sub_domains['data'] = \App\Models\Sub_Domain::orderby("Name","asc")
+      ->select('id','Name')
 
-        return view('welcome', compact('departmentData','domains','employees','x','y','categories','volk','D'));
+      ->get();
+*/
+
+      //select Name from sub_domains where id = id_subdomain from link_srv_subdomains 
+      //and Id_Server = id from servers and Add_ip from link_srv_subdomain = value
+      
+      /*
+    $value = $request->fgkL;
+
+    $sub_domains= DB::table('sub__domains')
+    ->join('link_srv_subdomains', 'sub__domains.id', '=', 'link_srv_subdomains.id_subdomain')
+    ->join('servers', 'link_srv_subdomains.Id_Server', '=', 'servers.id')
+    ->where('link_srv_subdomains.Add_ip', '=', $value)
+    ->select('sub__domains.Name')
+    ->get();
+*/
+   
+$sub_domains2 = \App\Models\Sub_Domain::orderby("Name","asc")
+->select('id','Name')
+->get();
+
+
+$Acc_Prv_Srv['data'] = \App\Models\Acc_Prv_Srv::orderby("User","asc")
+->select('id','User','Password','Location')
+->get();
+
+
+
+        return view('welcome', compact('departmentData','domains','employees','x','y','categories','volk','D','sub_domains2','Acc_Prv_Srv'));
 
       
     }
@@ -293,7 +343,9 @@ class Controller extends BaseController
    
    
 
-    public function index2(){
+    public function index2(Request $request){
+
+       
 
       
 
@@ -302,6 +354,8 @@ class Controller extends BaseController
         ->select('id','Name')
 
         ->get();
+
+        
 
 
 
@@ -353,11 +407,35 @@ class Controller extends BaseController
         ->select('id','Name')
         ->get();
 
-
        
-       
+$Acc_Prv_Srv = \App\Models\Acc_Prv_Srv::orderby("User","asc")
+->select('id','User','Password','Location')
+->get();
 
-        return view('welcome', compact('departmentData','domains','employees','x','y','categories','volk','D'));
+        //$value = $request->input('EEEEV');
+        /*
+        $value = $request->EEEEV;
+
+        
+        $sub_domains = DB::table('sub__domains')
+        ->join('link_srv_subdomains', 'sub__domains.id', '=', 'link_srv_subdomains.id_subdomain')
+        ->join('servers', 'link_srv_subdomains.Id_Server', '=', 'servers.id')
+        ->where('link_srv_subdomains.Add_ip', '=', $value)
+        ->select('sub__domains.Name')
+        ->get();
+      */
+        
+        // Use the value as needed
+       
+        //dd($value);
+
+        
+
+        $sub_domains2 = \App\Models\Sub_Domain::orderby("Name","asc")
+        ->select('id','Name')
+        ->get();
+
+        return view('welcome', compact('departmentData','domains','employees','x','y','categories','volk','D','sub_domains2','Acc_Prv_Srv'));
 
        
      }
@@ -688,13 +766,38 @@ class Controller extends BaseController
         ->select('id','Name')
         ->get();
 
+
+      
+$Acc_Prv_Srv['data'] = \App\Models\Acc_Prv_Srv::orderby("User","asc")
+->select('id','User','Password','Location')
+->get();
+
         $D = \App\Models\Domain::
       select('id', 'Name')
       ->pluck('Name','id')
       ->toArray();
 
+      /*
+
+      $value = $request->fgkL;
+
+      $sub_domains = DB::table('sub__domains')
+      ->join('link_srv_subdomains', 'sub__domains.id', '=', 'link_srv_subdomains.id_subdomain')
+      ->join('servers', 'link_srv_subdomains.Id_Server', '=', 'servers.id')
+      ->where('link_srv_subdomains.Add_ip', '=', $value)
+      ->select('sub__domains.Name')
+      ->get();
+
+*/
+
+
+$sub_domains2 = \App\Models\Sub_Domain::orderby("Name","asc")
+->select('id','Name')
+->get();
+
+      
      
-        return view('welcome', compact('departmentData','domains','employees','x','y','categories','volk','D'));
+        return view('welcome', compact('departmentData','domains','employees','x','y','categories','volk','D','sub_domains2','Acc_Prv_Srv'));
 
 
     }
@@ -765,7 +868,16 @@ class Controller extends BaseController
         ->select('id','Name')
         ->get();
 
-        return view('welcome', compact('departmentData','domains','employees','x','y','categories','volk'));
+        $sub_domains2 = \App\Models\Sub_Domain::orderby("Name","asc")
+->select('id','Name')
+->get();
+
+
+$Acc_Prv_Srv['data'] = \App\Models\Acc_Prv_Srv::orderby("User","asc")
+->select('id','User','Password','Location')
+->get();
+
+        return view('welcome', compact('departmentData','domains','employees','x','y','categories','volk','sub_domains2','Acc_Prv_Srv'));
     }
 
 }
